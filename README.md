@@ -2,7 +2,7 @@
 Free Range Routing Install
 
 
-Run install.sh as a sudoer. This can be run on either x86 or ARM RedHat based linux. This was tested on Amazon Linux 2 including both C5 and M6G (ARM). 
+Run install.sh as a sudoer. This was designed for Amazon Linux 2 on the new Graviton 2 Amazon EC2 instances. This was tested on M6G
 
 to run: 
 
