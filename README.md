@@ -9,6 +9,6 @@ to run:
 ```
 git clone https://github.com/nvsdm136/frr-installer.git
 cd frr-installer
-chmod +x installer.sh
-sudo ./installer.sh
+chmod +x install.sh
+sudo ./install.sh
 ```
