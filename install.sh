@@ -1,5 +1,6 @@
+#!/bin/bash
 yum -y install git gcc cmake pcre pcre-devel python3 python3-devel autoconf automake libtool make readline-devel texinfo net-snmp-devel groff pkgconfig json-c-devel pam-devel bison flex pytest c-ares-devel python-devel systemd-devel python-sphinx libcap-devel
-cd ~
+cd /opt/
 git clone https://github.com/CESNET/libyang.git
 cd libyang
 mkdir build; cd build
@@ -11,7 +12,7 @@ sudo groupadd -g 92 frr
 sudo groupadd -r -g 85 frrvty
 sudo useradd -u 92 -g 92 -M -r -G frrvty -s /sbin/nologin \
   -c "FRR FRRouting suite" -d /var/run/frr frr
-cd ~
+cd /opt/
 git clone https://github.com/frrouting/frr.git frr
 cd frr
 ./bootstrap.sh
@@ -64,4 +65,4 @@ sudo install -p -m 644 tools/frr.service /usr/lib/systemd/system/frr.service
 sudo systemctl preset frr.service
 sudo systemctl enable frr
 sudo systemctl start frr
-cd ~
+cd /opt/
