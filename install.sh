@@ -1,6 +1,11 @@
 #!/bin/bash
-yum -y install git gcc cmake pcre pcre-devel python3 python3-devel autoconf automake libtool make readline-devel texinfo net-snmp-devel groff pkgconfig json-c-devel pam-devel bison flex pytest c-ares-devel python-devel systemd-devel python-sphinx libcap-devel
-cd /opt/
+cat /etc/system-release
+if grep Amazon /etc/system-release 1> /dev/null
+    then amazon-linux-extras install -y epel 
+    else echo "not AML"; EXIT
+fi
+yum -y update
+yum -y install git gcc cmake pcre pcre-devel python3 python3-devel autoconf automake libtool make readline-devel texinfo net-snmp-devel groff pkgconfig json-c-devel pam-devel bison flex pytest c-ares-devel python-devel systemd-devel python-sphinx libcap-devel strongswan
 git clone https://github.com/CESNET/libyang.git
 cd libyang
 mkdir build; cd build
@@ -12,7 +17,7 @@ sudo groupadd -g 92 frr
 sudo groupadd -r -g 85 frrvty
 sudo useradd -u 92 -g 92 -M -r -G frrvty -s /sbin/nologin \
   -c "FRR FRRouting suite" -d /var/run/frr frr
-cd /opt/
+cd ../../
 git clone --single-branch --branch stable/6.0 https://github.com/frrouting/frr.git frr
 cd frr
 ./bootstrap.sh
@@ -64,5 +69,11 @@ sudo sysctl -p /etc/sysctl.d/90-routing-sysctl.conf
 sudo install -p -m 644 tools/frr.service /usr/lib/systemd/system/frr.service
 sudo systemctl preset frr.service
 sudo systemctl enable frr
-sudo systemctl start frr
-cd /opt/
+sudo systemctl enable strongswan
+cd ../
+cat bgpd.conf > /etc/frr/bgpd.conf
+cat ipsec-vti.sh > /etc/ipsec-vti.sh
+cat ipsec.conf > /etc/strongswan/ipsec.conf
+chmod +x /etc/ipsec-vti.sh
+chown frr:frr /etc/frr/bgpd.conf
+chmod 600 /etc/frr/bgpd.conf
