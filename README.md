@@ -1,4 +1,5 @@
 #AWS Site-To-Site VPN Router
+
 Install and configure StrongSwan and Free Range Routing to connect to AWS Site-to-Site VPN with BGP Peering.
 
 
@@ -7,8 +8,8 @@ Run install.sh as a sudoer. This was designed for Amazon Linux 2 on Amazon EC2 i
 to run: 
 
 ```
-git clone https://github.com/nvsdm136/frr-installer.git
-cd frr-installer
+git clone https://github.com/nvsdm136/AWS-S2SVPN-Router.git
+cd AWS-S2SVPN-Router
 chmod +x install.sh
 sudo ./install.sh
 ```
