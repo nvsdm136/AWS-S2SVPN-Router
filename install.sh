@@ -33,21 +33,13 @@ sudo useradd -u 92 -g 92 -M -r -G frrvty -s /sbin/nologin -c "FRR FRRouting suit
 cd ../../
 git clone https://github.com/frrouting/frr.git frr
 cd frr/
-source ~/.bash_profile; source ~/.bashrc; ./bootstrap.sh
-sleep 20
 ./bootstrap.sh
-sleep 20
-printf "###############################\n####  Done with bootstrap  ####\n###############################\n"
+./bootstrap.sh
 pwd
-sleep 4
 sh configure --bindir=/usr/bin --sbindir=/usr/lib/frr --sysconfdir=/etc/frr --libdir=/usr/lib/frr --libexecdir=/usr/lib/frr --localstatedir=/var/run/frr --with-moduledir=/usr/lib/frr/modules --enable-snmp=agentx --enable-multipath=64 --enable-user=frr --enable-group=frr --enable-vty-group=frrvty --enable-systemd=yes --disable-exampledir --disable-ldpd --enable-fpm --with-pkg-git-version --with-pkg-extra-version=-MyOwnFRRVersion SPHINXBUILD=/usr/bin/sphinx-build
-sleep 20
 make
-sleep 20
 make check
-sleep 20
 sudo make install
-sleep 20
 
 
 printf "########################################\n####  FRR Installation is Complete  ####\n########################################\n"
