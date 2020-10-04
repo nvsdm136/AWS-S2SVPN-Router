@@ -1,4 +1,4 @@
-#!/bin/bash  -x -c '. $HOME/.bash_profile; . $HOME/.bashrc;'
+#!/bin/bash
 
 cat /etc/system-release
 
@@ -29,12 +29,13 @@ printf "######################################\n####  libyang has been installed
 
 sudo groupadd -g 92 frr
 sudo groupadd -r -g 85 frrvty
-sudo useradd -u 92 -g 92 -M -r -G frrvty -s /sbin/nologin \
-  -c "FRR FRRouting suite" -d /var/run/frr frr
+sudo useradd -u 92 -g 92 -M -r -G frrvty -s /sbin/nologin -c "FRR FRRouting suite" -d /var/run/frr frr
 cd ../../
 git clone https://github.com/frrouting/frr.git frr
 cd frr/
-sh bootstrap.sh
+source ~/.bash_profile; source ~/.bashrc; ./bootstrap.sh
+sleep 20
+./bootstrap.sh
 sleep 20
 printf "###############################\n####  Done with bootstrap  ####\n###############################\n"
 pwd
