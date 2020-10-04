@@ -33,12 +33,13 @@ sudo useradd -u 92 -g 92 -M -r -G frrvty -s /sbin/nologin \
   -c "FRR FRRouting suite" -d /var/run/frr frr
 cd ../../
 git clone --single-branch --branch stable/6.0 https://github.com/frrouting/frr.git frr
-sleep 10
 cd frr/
 pwd
 ./bootstrap.sh
 sleep 20
-./configure --bindir=/usr/bin --sbindir=/usr/lib/frr --sysconfdir=/etc/frr --libdir=/usr/lib/frr --libexecdir=/usr/lib/frr --localstatedir=/var/run/frr --with-moduledir=/usr/lib/frr/modules --enable-snmp=agentx --enable-multipath=64 --enable-user=frr --enable-group=frr --enable-vty-group=frrvty --enable-systemd=yes --disable-exampledir --disable-ldpd --enable-fpm --with-pkg-git-version --with-pkg-extra-version=-MyOwnFRRVersion SPHINXBUILD=/usr/bin/sphinx-build
+pwd
+sleep 4
+sh configure --bindir=/usr/bin --sbindir=/usr/lib/frr --sysconfdir=/etc/frr --libdir=/usr/lib/frr --libexecdir=/usr/lib/frr --localstatedir=/var/run/frr --with-moduledir=/usr/lib/frr/modules --enable-snmp=agentx --enable-multipath=64 --enable-user=frr --enable-group=frr --enable-vty-group=frrvty --enable-systemd=yes --disable-exampledir --disable-ldpd --enable-fpm --with-pkg-git-version --with-pkg-extra-version=-MyOwnFRRVersion SPHINXBUILD=/usr/bin/sphinx-build
 sleep 20
 make
 sleep 20
