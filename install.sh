@@ -9,6 +9,11 @@ fi
 
 yum -y update
 yum -y install git gcc cmake pcre pcre-devel python3 python3-devel autoconf automake libtool make readline-devel texinfo net-snmp-devel groff pkgconfig json-c-devel pam-devel bison flex pytest c-ares-devel python-devel systemd-devel python-sphinx libcap-devel strongswan
+
+
+printf "##############################################\n####  Pre-requisites have been installed  ####\n##############################################\n"
+
+
 git clone https://github.com/CESNET/libyang.git
 cd libyang
 mkdir build; cd build
@@ -16,6 +21,12 @@ cmake -DENABLE_LYD_PRIV=ON -DCMAKE_INSTALL_PREFIX:PATH=/usr \
       -D CMAKE_BUILD_TYPE:String="Release" ..
 make
 sudo make install
+
+
+printf"######################################\n####  libyang has been installed  ####\n######################################\n"
+
+
+
 sudo groupadd -g 92 frr
 sudo groupadd -r -g 85 frrvty
 sudo useradd -u 92 -g 92 -M -r -G frrvty -s /sbin/nologin \
@@ -47,6 +58,12 @@ cd frr
 make
 make check
 sudo make install
+
+
+printf"########################################\n####  FRR Installation is Complete  ####\n########################################\n"
+
+
+
 sudo mkdir /var/log/frr
 sudo mkdir /etc/frr
 sudo touch /etc/frr/zebra.conf
