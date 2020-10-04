@@ -8,10 +8,7 @@ Run install.sh as a sudoer. This was designed for Amazon Linux 2 on Amazon EC2 i
 to run: 
 
 ```
-git clone https://github.com/nvsdm136/AWS-S2SVPN-Router.git
-cd AWS-S2SVPN-Router
-chmod +x install.sh
-sudo ./install.sh
+git clone https://github.com/nvsdm136/AWS-S2SVPN-Router.git; cd AWS-S2SVPN-Router; sh run.sh
 ```
 
 Additionally, you can configure all VPN and BGP parameters via the bootstrapper script (or edit ipsec-vti.sh, ipsec.conf, ipsec.secrets and bgpd.conf manually). To run the bootstrapper:
