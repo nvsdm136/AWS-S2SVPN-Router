@@ -1,9 +1,12 @@
 #!/bin/bash
+
 cat /etc/system-release
+
 if grep Amazon /etc/system-release 1> /dev/null
     then amazon-linux-extras install -y epel 
     else echo "not AML"; EXIT
 fi
+
 yum -y update
 yum -y install git gcc cmake pcre pcre-devel python3 python3-devel autoconf automake libtool make readline-devel texinfo net-snmp-devel groff pkgconfig json-c-devel pam-devel bison flex pytest c-ares-devel python-devel systemd-devel python-sphinx libcap-devel strongswan
 git clone https://github.com/CESNET/libyang.git
