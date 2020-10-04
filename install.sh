@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash  -x -c '. $HOME/.bash_profile; . $HOME/.bashrc;'
 
 cat /etc/system-release
 
