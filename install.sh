@@ -35,6 +35,7 @@ cd ../../
 git clone --single-branch --branch stable/6.0 https://github.com/frrouting/frr.git frr
 cd frr
 ./bootstrap.sh
+sleep 90
 ./configure \
     --bindir=/usr/bin \
     --sbindir=/usr/lib/frr \
@@ -55,9 +56,13 @@ cd frr
     --with-pkg-git-version \
     --with-pkg-extra-version=-MyOwnFRRVersion \
     SPHINXBUILD=/usr/bin/sphinx-build
+sleep 90
 make
+sleep 90
 make check
+sleep 90
 sudo make install
+sleep 60
 
 
 printf"########################################\n####  FRR Installation is Complete  ####\n########################################\n"
