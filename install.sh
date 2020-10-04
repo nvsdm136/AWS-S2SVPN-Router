@@ -32,10 +32,9 @@ sudo groupadd -r -g 85 frrvty
 sudo useradd -u 92 -g 92 -M -r -G frrvty -s /sbin/nologin \
   -c "FRR FRRouting suite" -d /var/run/frr frr
 cd ../../
-git clone --single-branch --branch stable/6.0 https://github.com/frrouting/frr.git frr
+git clone https://github.com/frrouting/frr.git frr
 cd frr/
-pwd
-./bootstrap.sh
+sh bootstrap.sh
 sleep 20
 printf "###############################\n####  Done with bootstrap  ####\n###############################\n"
 pwd
