@@ -23,7 +23,7 @@ make
 sudo make install
 
 
-printf"######################################\n####  libyang has been installed  ####\n######################################\n"
+printf "######################################\n####  libyang has been installed  ####\n######################################\n"
 
 
 
@@ -33,9 +33,11 @@ sudo useradd -u 92 -g 92 -M -r -G frrvty -s /sbin/nologin \
   -c "FRR FRRouting suite" -d /var/run/frr frr
 cd ../../
 git clone --single-branch --branch stable/6.0 https://github.com/frrouting/frr.git frr
-cd frr
+sleep 10
+cd frr/
+pwd
 ./bootstrap.sh
-sleep 90
+sleep 20
 ./configure \
     --bindir=/usr/bin \
     --sbindir=/usr/lib/frr \
@@ -56,16 +58,16 @@ sleep 90
     --with-pkg-git-version \
     --with-pkg-extra-version=-MyOwnFRRVersion \
     SPHINXBUILD=/usr/bin/sphinx-build
-sleep 90
+sleep 20
 make
-sleep 90
+sleep 20
 make check
-sleep 90
+sleep 20
 sudo make install
-sleep 60
+sleep 20
 
 
-printf"########################################\n####  FRR Installation is Complete  ####\n########################################\n"
+printf "########################################\n####  FRR Installation is Complete  ####\n########################################\n"
 
 
 
