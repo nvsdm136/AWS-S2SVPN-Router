@@ -11,7 +11,7 @@ to run attended :
 git clone https://github.com/nvsquirrel/AWS-S2SVPN-Router.git; cd AWS-S2SVPN-Router; sh run.sh; chmod +x bootstrapper.sh; ./bootstrapper.sh
 ```
 
-to run unattended (bootstrap script) run the following. make sure to replace <region> with the region (such as us-east-1) <local ASN> with the ASN you want to use on the instance and <TGW ID> with the TGW ID you wish to attach to:
+to run unattended (bootstrap script) run the following. `make sure to replace <region> with the region (such as us-east-1) <local ASN> with the ASN you want to use on the instance and <TGW ID> with the TGW ID you wish to attach to`:
 
 ```
 #!/bin/bash
