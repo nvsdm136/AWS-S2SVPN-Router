@@ -1,4 +1,24 @@
-TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"` && publicip=`curl -H "X-aws-ec2-metadata-token: $TOKEN" -v http://169.254.169.254/latest/meta-data/public-ipv4` && instanceid=`curl -H "X-aws-ec2-metadata-token: $TOKEN" -v http://169.254.169.254/latest/meta-data/instance-id` && localpvtip=`curl -H "X-aws-ec2-metadata-token: $TOKEN" -v http://169.254.169.254/latest/meta-data/local-ipv4`
+TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"`
+publicip=`curl -H "X-aws-ec2-metadata-token: $TOKEN" -v http://169.254.169.254/latest/meta-data/public-ipv4`
+instanceid=`curl -H "X-aws-ec2-metadata-token: $TOKEN" -v http://169.254.169.254/latest/meta-data/instance-id`
+localpvtip=`curl -H "X-aws-ec2-metadata-token: $TOKEN" -v http://169.254.169.254/latest/meta-data/local-ipv4`
+
+if ${#publicip} -ge 5
+	then echo Your public IP is $publicip
+	else publicip=`curl http://checkip.amazonaws.com/`
+fi
+
+if ${#instanceid} -ge 5
+	then echo Your instance ID is $instanceid
+	else instanceid=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 17 | head -n 1)
+fi
+
+if ${#localpvtip} -ge 5
+	then echo Your Private IP is $localpvtip
+	else echo Please specify the IP bound to the interface you want the VPN to originate from (that is associated with the Public IP we listed above): && read localpvtip
+fi
+
+
 
 echo Region:
 read region
