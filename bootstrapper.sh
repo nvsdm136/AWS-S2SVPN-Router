@@ -3,31 +3,49 @@ publicip=`curl -H "X-aws-ec2-metadata-token: $TOKEN" -v http://169.254.169.254/l
 instanceid=`curl -H "X-aws-ec2-metadata-token: $TOKEN" -v http://169.254.169.254/latest/meta-data/instance-id`
 localpvtip=`curl -H "X-aws-ec2-metadata-token: $TOKEN" -v http://169.254.169.254/latest/meta-data/local-ipv4`
 
-if ${#publicip} -ge 5
+if [[ ${#publicip} -ge 5 ]]
 	then echo Your public IP is $publicip
 	else publicip=`curl http://checkip.amazonaws.com/`
 fi
 
-if ${#instanceid} -ge 5
+if [[ ${#instanceid} -ge 5 ]]
 	then echo Your instance ID is $instanceid
 	else instanceid=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 17 | head -n 1)
 fi
 
-if ${#localpvtip} -ge 5
+if [[ ${#localpvtip} -ge 5 ]]
 	then echo Your Private IP is $localpvtip
-	else echo Please specify the IP bound to the interface you want the VPN to originate from (that is associated with the Public IP we listed above): && read localpvtip
+	else printf "Please specify the IP bound to the interface you want the VPN to originate from (that is associated with the Public IP we listed above):" && read localpvtip
 fi
 
+while getopts ":r:a:t:" opt; do
+  case ${opt} in
+    r ) region=$OPTARG
+      ;;
+    a ) localas=$OPTARG
+      ;;
+    t ) tgwid=$OPTARG
+      ;;
+    \? ) echo "Usage: cmd [-r REGION] [-a LOCAL ASN] [-t TGW ID]"
+      exit 1
+      ;;
+  esac
+done
 
+if [[ ${#region} -ge  9 ]]
+	then echo Your region is $region
+	else echo Region: && read region
+fi
 
-echo Region:
-read region
+if [[ ${#localas} -ge 5 ]]
+	then echo Your local ASN is $localas
+	else printf "Local (CGW) ASN:" && read localas
+fi
 
-echo Local (CGW) ASN:
-read localas
-
-echo TGW ID:
-read tgwid
+if [[ ${#tgwid} -ge 15 ]]
+	then echo Your TGW ID is $tgwid
+	else echo TGW ID: && read tgwid
+fi
 
 cgw=`aws ec2 create-customer-gateway --bgp-asn $localas --public-ip $publicip --type ipsec.1  --tag-specification 'ResourceType=customer-gateway,Tags=[{Key=Name,Value='"$instanceid"'}]' --region $region | grep CustomerGatewayId | sed 's/\"CustomerGatewayId\": \"//' | sed 's/\",//'`
 vpn=`aws ec2  create-vpn-connection --customer-gateway-id $cgw --type ipsec.1 --transit-gateway-id $tgwid --tag-specification 'ResourceType=vpn-connection,Tags=[{Key=Name,Value='"$instanceid"'}]' --region $region | grep VpnConnectionId | sed 's/\"VpnConnectionId\": \"//' | sed 's/\",//'`
