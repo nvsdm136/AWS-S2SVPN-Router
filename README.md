@@ -20,10 +20,9 @@ yum -y install git
 git clone https://github.com/nvsquirrel/AWS-S2SVPN-Router.git; cd AWS-S2SVPN-Router; sh run.sh; chmod +x bootstrapper.sh; ./bootstrapper.sh -r <region> -a <local ASN> -t <TGW ID>
 ```
 
-command options for bootstrapper.sh
+Additionally, you can configure all VPN and BGP parameters via the bootstrapper script (or edit ipsec-vti.sh, ipsec.conf, ipsec.secrets and bgpd.conf manually). To run the bootstrapper (note: bootstrapper only supports new TGW attachments right now):
 
--  -r  region; eg. us-east-1
--  -a  Local ASN;  any 1 byte or 4 byte ASN between 1-2147483647
--  -t  Transite Gateway ID; eg.  tgw-1234abcd5678efgh9
--  -e  Existing VPN ID; eg. vpn-1234abcd5678efgh9
-
+```
+chmod +x bootstrapper.sh
+sudo ./bootstrapper.sh
+```
