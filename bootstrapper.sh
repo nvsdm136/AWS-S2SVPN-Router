@@ -18,7 +18,7 @@ if [[ ${#localpvtip} -ge 5 ]]
 	else printf "Please specify the IP bound to the interface you want the VPN to originate from (that is associated with the Public IP we listed above):" && read localpvtip
 fi
 
-while getopts ":r:a:t:" opt; do
+while getopts ":r:a:t:e:" opt; do
   case ${opt} in
     r ) region=$OPTARG
       ;;
@@ -26,6 +26,8 @@ while getopts ":r:a:t:" opt; do
       ;;
     t ) tgwid=$OPTARG
       ;;
+	e ) vpn=$OPTARG
+	  ;;
     \? ) echo "Usage: cmd [-r REGION] [-a LOCAL ASN] [-t TGW ID]"
       exit 1
       ;;
@@ -48,7 +50,12 @@ if [[ ${#tgwid} -ge 15 ]]
 fi
 
 cgw=`aws ec2 create-customer-gateway --bgp-asn $localas --public-ip $publicip --type ipsec.1  --tag-specification 'ResourceType=customer-gateway,Tags=[{Key=Name,Value='"$instanceid"'}]' --region $region | grep CustomerGatewayId | sed 's/\"CustomerGatewayId\": \"//' | sed 's/\",//'`
-vpn=`aws ec2  create-vpn-connection --customer-gateway-id $cgw --type ipsec.1 --transit-gateway-id $tgwid --tag-specification 'ResourceType=vpn-connection,Tags=[{Key=Name,Value='"$instanceid"'}]' --region $region | grep VpnConnectionId | sed 's/\"VpnConnectionId\": \"//' | sed 's/\",//'`
+
+if [[ ${#vpn} -ge 12 ]]
+	then echo your vpn ID is $vpn
+	else vpn=`aws ec2  create-vpn-connection --customer-gateway-id $cgw --type ipsec.1 --transit-gateway-id $tgwid --tag-specification 'ResourceType=vpn-connection,Tags=[{Key=Name,Value='"$instanceid"'}]' --region $region | grep VpnConnectionId | sed 's/\"VpnConnectionId\": \"//' | sed 's/\",//'`
+fi
+
 aws ec2 describe-vpn-connections --vpn-connection-ids $vpn --region $region > output
 
 cat output | sed -n 's:.*<customer_gateway_id>\(.*\)</ipsec_tunnel>.*:\1:p' > tunnel
