@@ -4,7 +4,7 @@
 - [x] Automate the installation of StrongSwan and FRR for Amazon Linux 2 on both ARM & x86
 - [x] Bootstrap auto-configuration of a connection to a TGW
 - [x] Allow users to specify existing Site-To-Site VPN Connections
-- [ ] Allow auto-configuration of VGW connected Site-To-Site VPN Connections
+- [x] Allow auto-configuration of VGW connected Site-To-Site VPN Connections
 - [ ] Full launch template in CloudFormation
 - [ ] Support for CentOS 8
 - [ ] Support for CentOS 7
