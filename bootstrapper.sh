@@ -1,3 +1,4 @@
+#!/bin/bash
 TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"`
 publicip=`curl -H "X-aws-ec2-metadata-token: $TOKEN" -v http://169.254.169.254/latest/meta-data/public-ipv4`
 instanceid=`curl -H "X-aws-ec2-metadata-token: $TOKEN" -v http://169.254.169.254/latest/meta-data/instance-id`
@@ -48,7 +49,7 @@ fi
 
 if [[ ${#tgwid} -ge 15 ]] || [[ ${$vgwid} -ge 15 ]]
 	then echo Your TGW ID is $tgwid
-	else echo Attach to VGW or CGW (v or t): && read v2tgw
+	else printf "Attach to VGW or CGW (v or t):" && read v2tgw
 	if [[ $v2tgw = "t" ]]
 		then echo TGW ID: && read tgwid
 	elif [[ $v2tgw = "v" ]]
@@ -61,9 +62,13 @@ cgw=`aws ec2 create-customer-gateway --bgp-asn $localas --public-ip $publicip --
 
 if [[ ${#vpn} -ge 12 ]]
 	then echo your vpn ID is $vpn
-	elif [[ ${#tgwid} -ge 12 ]] vpn=`aws ec2  create-vpn-connection --customer-gateway-id $cgw --type ipsec.1 --transit-gateway-id $tgwid --tag-specification 'ResourceType=vpn-connection,Tags=[{Key=Name,Value='"$instanceid"'}]' --region $region | grep VpnConnectionId | sed 's/\"VpnConnectionId\": \"//' | sed 's/\",//'`
-	elif [[ ${#vgwid} -ge 12 ]] vpn=`aws ec2  create-vpn-connection --customer-gateway-id $cgw --type ipsec.1 --vpn-gateway-id $vgwid --tag-specification 'ResourceType=vpn-connection,Tags=[{Key=Name,Value='"$instanceid"'}]' --region $region | grep VpnConnectionId | sed 's/\"VpnConnectionId\": \"//' | sed 's/\",//'`
-	else echo Something went wrong while trying to create or verify an existing VPN connection && exit 1
+	else
+		if [[ ${#tgwid} -ge 12 ]] 
+			then vpn=`aws ec2  create-vpn-connection --customer-gateway-id $cgw --type ipsec.1 --transit-gateway-id $tgwid --tag-specification 'ResourceType=vpn-connection,Tags=[{Key=Name,Value='"$instanceid"'}]' --region $region | grep VpnConnectionId | sed 's/\"VpnConnectionId\": \"//' | sed 's/\",//'`
+		fi
+		if [[ ${#vgwid} -ge 12 ]] 
+			then vpn=`aws ec2  create-vpn-connection --customer-gateway-id $cgw --type ipsec.1 --vpn-gateway-id $vgwid --tag-specification 'ResourceType=vpn-connection,Tags=[{Key=Name,Value='"$instanceid"'}]' --region $region | grep VpnConnectionId | sed 's/\"VpnConnectionId\": \"//' | sed 's/\",//'`
+		fi
 fi
 
 aws ec2 describe-vpn-connections --vpn-connection-ids $vpn --region $region > output
