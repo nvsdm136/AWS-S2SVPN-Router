@@ -15,7 +15,7 @@ to run unattended (bootstrap script) run the following. `make sure to replace <r
 
 ```
 #!/bin/bash
-yum -y install updates
+yum -y update
 yum -y install git
 git clone https://github.com/nvsquirrel/AWS-S2SVPN-Router.git; cd AWS-S2SVPN-Router; sh run.sh; chmod +x bootstrapper.sh; ./bootstrapper.sh -r <region> -a <local ASN> -t <TGW ID>
 ```
