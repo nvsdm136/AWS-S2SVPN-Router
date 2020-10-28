@@ -26,3 +26,15 @@ Additionally, you can configure all VPN and BGP parameters via the bootstrapper 
 chmod +x bootstrapper.sh
 sudo ./bootstrapper.sh
 ```
+
+
+Bootstrap command switches:
+
+* -r  Region  ex. us-east-1
+* -a  Local ASN   (64512-65534)  ex. 64512
+* -t  TGW ID    ex. tgw-1234567890abcdefg
+* -v  VGW ID    ex. vgw-1234567890abcdefg
+
+
+note if you specify both TGW and VGW the TGW will take precidence.
+

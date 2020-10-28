@@ -5,6 +5,7 @@
 - [x] Bootstrap auto-configuration of a connection to a TGW
 - [ ] Allow users to specify existing Site-To-Site VPN Connections
 - [ ] Allow users to specify FRR branch from a predifined list
+- [ ] Better exception handling
 - [x] Allow auto-configuration of VGW connected Site-To-Site VPN Connections
 - [ ] Full launch template in CloudFormation
 - [ ] Support for CentOS 8
