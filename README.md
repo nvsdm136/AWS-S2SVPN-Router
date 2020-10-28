@@ -36,5 +36,5 @@ Bootstrap command switches:
 * -v  VGW ID    ex. vgw-1234567890abcdefg
 
 
-note if you specify both TGW and VGW the TGW will take precidence.
+note if you specify both TGW and VGW the TGW will take precedence.
 
