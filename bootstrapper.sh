@@ -4,27 +4,29 @@ instanceid=`curl -H "X-aws-ec2-metadata-token: $TOKEN" -v http://169.254.169.254
 localpvtip=`curl -H "X-aws-ec2-metadata-token: $TOKEN" -v http://169.254.169.254/latest/meta-data/local-ipv4`
 
 if [[ ${#publicip} -ge 5 ]]
-	then echo Your public IP is $publicip
-	else publicip=`curl http://checkip.amazonaws.com/`
+        then echo Your public IP is $publicip
+        else publicip=`curl http://checkip.amazonaws.com/`
 fi
 
 if [[ ${#instanceid} -ge 5 ]]
-	then echo Your instance ID is $instanceid
-	else instanceid=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 17 | head -n 1)
+        then echo Your instance ID is $instanceid
+        else instanceid=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 17 | head -n 1)
 fi
 
 if [[ ${#localpvtip} -ge 5 ]]
-	then echo Your Private IP is $localpvtip
-	else printf "Please specify the IP bound to the interface you want the VPN to originate from (that is associated with the Public IP we listed above):" && read localpvtip
+        then echo Your Private IP is $localpvtip
+        else printf "Please specify the IP bound to the interface you want the VPN to originate from (that is associated with the Public IP we listed above):" && read localpvtip
 fi
 
-while getopts ":r:a:t:" opt; do
+while getopts ":r:a:t:v:" opt; do
   case ${opt} in
     r ) region=$OPTARG
       ;;
     a ) localas=$OPTARG
       ;;
     t ) tgwid=$OPTARG
+      ;;
+    v ) vgwid=$OPTARG
       ;;
     \? ) echo "Usage: cmd [-r REGION] [-a LOCAL ASN] [-t TGW ID]"
       exit 1
@@ -33,22 +35,50 @@ while getopts ":r:a:t:" opt; do
 done
 
 if [[ ${#region} -ge  9 ]]
-	then echo Your region is $region
-	else echo Region: && read region
+        then echo Your region is $region
+        else echo Region: && read region
 fi
 
 if [[ ${#localas} -ge 5 ]]
-	then echo Your local ASN is $localas
-	else printf "Local (CGW) ASN:" && read localas
+        then echo Your local ASN is $localas
+        else printf "Local (CGW) ASN:" && read localas
 fi
 
 if [[ ${#tgwid} -ge 15 ]]
-	then echo Your TGW ID is $tgwid
-	else echo TGW ID: && read tgwid
+        then echo Your TGW ID is $tgwid; gw="TRUE"
+        else echo no TGW set
 fi
 
+if [[ ${#vgwid} -ge 15 ]]
+        then echo Your VGW ID is $vgwid; gw="TRUE"
+        else echo no VGW set
+fi
+
+echo $gw
+
+
+if [[ $gw == TRUE ]]
+        then echo "gw is set"
+        else printf "Please select VGW or TGW [VGW TGW]:" && read gwtype
+fi
+
+if [[ $gwtype == TGW ]]
+        then echo TGW ID: && read tgwid
+        else echo ""
+fi
+
+if [[ $gwtype == VGW ]]
+        then echo VGW ID: && read vgwid
+        else echo ""
+fi
+
+
 cgw=`aws ec2 create-customer-gateway --bgp-asn $localas --public-ip $publicip --type ipsec.1  --tag-specification 'ResourceType=customer-gateway,Tags=[{Key=Name,Value='"$instanceid"'}]' --region $region | grep CustomerGatewayId | sed 's/\"CustomerGatewayId\": \"//' | sed 's/\",//'`
-vpn=`aws ec2  create-vpn-connection --customer-gateway-id $cgw --type ipsec.1 --transit-gateway-id $tgwid --tag-specification 'ResourceType=vpn-connection,Tags=[{Key=Name,Value='"$instanceid"'}]' --region $region | grep VpnConnectionId | sed 's/\"VpnConnectionId\": \"//' | sed 's/\",//'`
+
+if [[ ${#tgwid} -ge 15 ]]
+        then vpn=`aws ec2  create-vpn-connection --customer-gateway-id $cgw --type ipsec.1 --transit-gateway-id $tgwid --tag-specification 'ResourceType=vpn-connection,Tags=[{Key=Name,Value='"$instanceid"'}]' --region $region | grep VpnConnectionId | sed 's/\"VpnConnectionId\": \"//' | sed 's/\",//'`
+        else vpn=`aws ec2  create-vpn-connection --customer-gateway-id $cgw --type ipsec.1 --vpn-gateway-id $vgwid --tag-specification 'ResourceType=vpn-connection,Tags=[{Key=Name,Value='"$instanceid"'}]' --region $region | grep VpnConnectionId | sed 's/\"VpnConnectionId\": \"//' | sed 's/\",//'`
+fi
 aws ec2 describe-vpn-connections --vpn-connection-ids $vpn --region $region > output
 
 cat output | sed -n 's:.*<customer_gateway_id>\(.*\)</ipsec_tunnel>.*:\1:p' > tunnel
@@ -78,7 +108,7 @@ sed -i 's/localas/'"$localas"'/' /etc/frr/bgpd.conf
 sed -i 's/remoteinside1/'"$vgw1insideip"'/' /etc/frr/bgpd.conf
 sed -i 's/remoteas/'"$vgwasn"'/' /etc/frr/bgpd.conf
 sed -i 's/remoteinside2/'"$vgw2insideip"'/' /etc/frr/bgpd.conf
-printf  "\n\n\n####################################################################################################################\n####################################################################################################################\n####                                                                                                            ####\n####   Giving AWS some time to setup the VPN Connection before we start the services and bring up the tunnels   ####\n####                                                                                                            ####\n####################################################################################################################\n####################################################################################################################\n\n\n"
+printf  "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n####################################################################################################################\n####################################################################################################################\n####                                                                                                            ####\n####   Giving AWS some time to setup the VPN Connection before we start the services and bring up the tunnels   ####\n####                                                                                                            ####\n####################################################################################################################\n####################################################################################################################\n\n\n"
 sleep 300
 systemctl start strongswan
 systemctl start frr
