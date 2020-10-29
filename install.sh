@@ -33,6 +33,7 @@ sudo useradd -u 92 -g 92 -M -r -G frrvty -s /sbin/nologin -c "FRR FRRouting suit
 cd ../../
 git clone --branch "stable/7.3" https://github.com/frrouting/frr.git frr
 cd frr/
+sed -i '/^AC_CONFIG_MACRO_DIR*/a AC_CONFIG_AUX_DIR([.])' configure.ac
 . ./bootstrap.sh
 #./bootstrap.sh
 #pwd
