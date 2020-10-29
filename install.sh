@@ -34,8 +34,8 @@ cd ../../
 git clone --branch "stable/7.3" https://github.com/frrouting/frr.git frr
 cd frr/
 . ./bootstrap.sh
-./bootstrap.sh
-pwd
+#./bootstrap.sh
+#pwd
 sh configure --bindir=/usr/bin --sbindir=/usr/lib/frr --sysconfdir=/etc/frr --libdir=/usr/lib/frr --libexecdir=/usr/lib/frr --localstatedir=/var/run/frr --with-moduledir=/usr/lib/frr/modules --enable-snmp=agentx --enable-multipath=64 --enable-user=frr --enable-group=frr --enable-vty-group=frrvty --enable-systemd=yes --disable-exampledir --disable-ldpd --enable-fpm --with-pkg-git-version --with-pkg-extra-version=-MyOwnFRRVersion SPHINXBUILD=/usr/bin/sphinx-build
 make
 make check
