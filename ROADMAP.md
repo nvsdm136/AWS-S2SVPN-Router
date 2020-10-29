@@ -3,6 +3,7 @@
 
 - [x] Automate the installation of StrongSwan and FRR for Amazon Linux 2 on both ARM & x86
 - [x] Bootstrap auto-configuration of a connection to a TGW
+- [ ] Include IAM Policy json document for the instance role
 - [ ] Allow users to specify existing Site-To-Site VPN Connections
 - [ ] Allow users to specify FRR branch from a predifined list
 - [ ] Better exception handling
@@ -15,7 +16,3 @@
 - [ ] Allow for Manual specification of all CGW parameters (No API Calls)
 
 
-
-### Eventually - Low Priority List
-
-- [ ] Figure out why frr bootstrapper script fails the first time but suceeds the second, but suceeds the first time when run manually........ :headscratch:
