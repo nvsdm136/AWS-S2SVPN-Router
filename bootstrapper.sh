@@ -116,12 +116,12 @@ sed -i 's/localas/'"$localas"'/' /etc/frr/bgpd.conf
 sed -i 's/remoteinside1/'"$vgw1insideip"'/' /etc/frr/bgpd.conf
 sed -i 's/remoteas/'"$vgwasn"'/' /etc/frr/bgpd.conf
 sed -i 's/remoteinside2/'"$vgw2insideip"'/' /etc/frr/bgpd.conf
-printf  "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n####################################################################################################################\n####################################################################################################################\n####                                                                                                            ####\n####   Giving AWS some time to setup the VPN Connection before we start the services and bring up the tunnels   ####\n####                                                                                                            ####\n####################################################################################################################\n####################################################################################################################\n\n\n"
+
 
 
 if [[ ${#presetvpn} -ge 3 ]]
 	then sleep 1
-	else sleep 300
+	else printf  "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n####################################################################################################################\n####################################################################################################################\n####                                                                                                            ####\n####   Giving AWS some time to setup the VPN Connection before we start the services and bring up the tunnels   ####\n####                                                                                                            ####\n####################################################################################################################\n####################################################################################################################\n\n\n"; sleep 300
 fi
 
 
