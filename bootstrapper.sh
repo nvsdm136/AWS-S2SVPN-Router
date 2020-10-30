@@ -120,8 +120,8 @@ printf  "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\
 
 
 if [[ ${#presetvpn} -ge 3 ]]
-	then sleep 300
-	else sleep 1
+	then sleep 1
+	else sleep 300
 fi
 
 
