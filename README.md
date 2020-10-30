@@ -34,9 +34,10 @@ Bootstrap command switches:
 * -a  Local ASN   (64512-65534)  ex. 64512
 * -t  TGW ID    ex. tgw-1234567890abcdefg
 * -v  VGW ID    ex. vgw-1234567890abcdefg
+* -e Existing VPN ID    ex. vpn-1234567890abcdefg
 
 
 NOTE: If you specify both TGW and VGW the TGW will take precedence. 
 
-PERMISSIONS: The bootstrapper makes use of the AWS CLI, you must allow create-customer-gateway, create-vpn-connection and describe-vpn-connections to be called on the instance via CLI.
+PERMISSIONS: The bootstrapper makes use of the AWS CLI, you must allow create-customer-gateway, create-vpn-connection and describe-vpn-connections to be called on the instance via CLI. You can find an example of the IAM Policy JSON document in IAMPolicy.json
 
