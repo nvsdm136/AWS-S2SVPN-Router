@@ -36,28 +36,28 @@ while getopts ":r:a:t:v:e:" opt; do
   esac
 done
 
-if [[ ${#region} -ge  9 && ${#vpn} -lt 15 ]]
+if [[ ${#region} -ge  9 ]]
         then echo Your region is $region
         else echo Region: && read region
 fi
 
-if [[ ${#localas} -ge 5 && ${#vpn} -lt 15 ]]
+if [[ ${#localas} -ge 5 || ${#vpn} -ge 15 ]]
         then echo Your local ASN is $localas
         else printf "Local (CGW) ASN:" && read localas
 fi
 
-if [[ ${#tgwid} -ge 15 && ${#vpn} -lt 15 ]]
+if [[ ${#tgwid} -ge 15 || ${#vpn} -ge 15 ]]
         then echo Your TGW ID is $tgwid; gw="TRUE"
         else echo no TGW set
 fi
 
-if [[ ${#vgwid} -ge 15 && ${#vpn} -lt 15 ]]
+if [[ ${#vgwid} -ge 15 || ${#vpn} -ge 15 ]]
         then echo Your VGW ID is $vgwid; gw="TRUE"
         else echo no VGW set
 fi
 
 
-if [[ $gw == TRUE ||  && ${#vpn} -ge 15 ]]
+if [[ $gw == TRUE ]]
         then echo "gw is set"
         else printf "Please select VGW or TGW [VGW TGW]:" && read gwtype
 fi
@@ -72,8 +72,10 @@ if [[ $gwtype == VGW ]]
         else echo ""
 fi
 
-
-cgw=`aws ec2 create-customer-gateway --bgp-asn $localas --public-ip $publicip --type ipsec.1  --tag-specification 'ResourceType=customer-gateway,Tags=[{Key=Name,Value='"$instanceid"'}]' --region $region | grep CustomerGatewayId | sed 's/\"CustomerGatewayId\": \"//' | sed 's/\",//'`
+if [[ ${#vpn} -lt 15 ]]
+	then cgw=`aws ec2 create-customer-gateway --bgp-asn $localas --public-ip $publicip --type ipsec.1  --tag-specification 'ResourceType=customer-gateway,Tags=[{Key=Name,Value='"$instanceid"'}]' --region $region | grep CustomerGatewayId | sed 's/\"CustomerGatewayId\": \"//' | sed 's/\",//'`
+	else printf "Pre-configured VPN"; presetvpn="TRUE"
+fi
 
 if [[ ${#tgwid} -ge 15 ]]
         then vpn=`aws ec2  create-vpn-connection --customer-gateway-id $cgw --type ipsec.1 --transit-gateway-id $tgwid --tag-specification 'ResourceType=vpn-connection,Tags=[{Key=Name,Value='"$instanceid"'}]' --region $region | grep VpnConnectionId | sed 's/\"VpnConnectionId\": \"//' | sed 's/\",//'`
@@ -95,6 +97,10 @@ cgw2psk=`cat tunnel2 | sed -n 's:.*<pre_shared_key>\(.*\)</pre_shared_key>.*:\1:
 vgw1insideip=`cat tunnel1 | sed -n 's:.*<vpn_gateway>\(.*\)</vpn_gateway>.*:\1:p' | sed -n 's:.*<tunnel_inside_address>\(.*\)</tunnel_inside_address>.*:\1:p' | sed -n 's:.*<ip_address>\(.*\)</ip_address>.*:\1:p'`
 vgw2insideip=`cat tunnel2 | sed -n 's:.*<vpn_gateway>\(.*\)</vpn_gateway>.*:\1:p' | sed -n 's:.*<tunnel_inside_address>\(.*\)</tunnel_inside_address>.*:\1:p' | sed -n 's:.*<ip_address>\(.*\)</ip_address>.*:\1:p'`
 vgwasn=`cat tunnel2 | sed -n 's:.*<vpn_gateway>\(.*\)</vpn_gateway>.*:\1:p' | sed -n 's:.*<asn>\(.*\)</asn>.*:\1:p'`
+localas=`cat tunnel2 | sed -n 's:.*<customer_gateway>\(.*\)</customer_gateway>.*:\1:p' | sed -n 's:.*<asn>\(.*\)</asn>.*:\1:p'`
+
+
+
 sed -i 's/localinside1/'"$cgw1insideip"'/' /etc/ipsec-vti.sh
 sed -i 's/localinside2/'"$cgw2insideip"'/' /etc/ipsec-vti.sh
 sed -i 's/remoteinside1/'"$vgw1insideip"'/' /etc/ipsec-vti.sh
@@ -111,6 +117,13 @@ sed -i 's/remoteinside1/'"$vgw1insideip"'/' /etc/frr/bgpd.conf
 sed -i 's/remoteas/'"$vgwasn"'/' /etc/frr/bgpd.conf
 sed -i 's/remoteinside2/'"$vgw2insideip"'/' /etc/frr/bgpd.conf
 printf  "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n####################################################################################################################\n####################################################################################################################\n####                                                                                                            ####\n####   Giving AWS some time to setup the VPN Connection before we start the services and bring up the tunnels   ####\n####                                                                                                            ####\n####################################################################################################################\n####################################################################################################################\n\n\n"
-sleep 300
+
+
+if [[ ${#presetvpn} -ge 3 ]]
+	then sleep 300
+	else sleep 1
+fi
+
+
 systemctl start strongswan
 systemctl start frr
