@@ -18,7 +18,7 @@ if [[ ${#localpvtip} -ge 5 ]]
         else printf "Please specify the IP bound to the interface you want the VPN to originate from (that is associated with the Public IP we listed above):" && read localpvtip
 fi
 
-while getopts ":r:a:t:v:" opt; do
+while getopts ":r:a:t:v:e:" opt; do
   case ${opt} in
     r ) region=$OPTARG
       ;;
@@ -28,36 +28,36 @@ while getopts ":r:a:t:v:" opt; do
       ;;
     v ) vgwid=$OPTARG
       ;;
+	e ) vpn=$OPTARG
+	  ;;
     \? ) echo "Usage: cmd [-r REGION] [-a LOCAL ASN] [-t TGW ID]"
       exit 1
       ;;
   esac
 done
 
-if [[ ${#region} -ge  9 ]]
+if [[ ${#region} -ge  9 && ${#vpn} -lt 15 ]]
         then echo Your region is $region
         else echo Region: && read region
 fi
 
-if [[ ${#localas} -ge 5 ]]
+if [[ ${#localas} -ge 5 && ${#vpn} -lt 15 ]]
         then echo Your local ASN is $localas
         else printf "Local (CGW) ASN:" && read localas
 fi
 
-if [[ ${#tgwid} -ge 15 ]]
+if [[ ${#tgwid} -ge 15 && ${#vpn} -lt 15 ]]
         then echo Your TGW ID is $tgwid; gw="TRUE"
         else echo no TGW set
 fi
 
-if [[ ${#vgwid} -ge 15 ]]
+if [[ ${#vgwid} -ge 15 && ${#vpn} -lt 15 ]]
         then echo Your VGW ID is $vgwid; gw="TRUE"
         else echo no VGW set
 fi
 
-echo $gw
 
-
-if [[ $gw == TRUE ]]
+if [[ $gw == TRUE ||  && ${#vpn} -ge 15 ]]
         then echo "gw is set"
         else printf "Please select VGW or TGW [VGW TGW]:" && read gwtype
 fi
@@ -77,7 +77,9 @@ cgw=`aws ec2 create-customer-gateway --bgp-asn $localas --public-ip $publicip --
 
 if [[ ${#tgwid} -ge 15 ]]
         then vpn=`aws ec2  create-vpn-connection --customer-gateway-id $cgw --type ipsec.1 --transit-gateway-id $tgwid --tag-specification 'ResourceType=vpn-connection,Tags=[{Key=Name,Value='"$instanceid"'}]' --region $region | grep VpnConnectionId | sed 's/\"VpnConnectionId\": \"//' | sed 's/\",//'`
-        else vpn=`aws ec2  create-vpn-connection --customer-gateway-id $cgw --type ipsec.1 --vpn-gateway-id $vgwid --tag-specification 'ResourceType=vpn-connection,Tags=[{Key=Name,Value='"$instanceid"'}]' --region $region | grep VpnConnectionId | sed 's/\"VpnConnectionId\": \"//' | sed 's/\",//'`
+        elif [[ ${#vgwid} -ge 15 ]]
+		then vpn=`aws ec2  create-vpn-connection --customer-gateway-id $cgw --type ipsec.1 --vpn-gateway-id $vgwid --tag-specification 'ResourceType=vpn-connection,Tags=[{Key=Name,Value='"$instanceid"'}]' --region $region | grep VpnConnectionId | sed 's/\"VpnConnectionId\": \"//' | sed 's/\",//'`
+		else echo No GW set
 fi
 aws ec2 describe-vpn-connections --vpn-connection-ids $vpn --region $region > output
 
