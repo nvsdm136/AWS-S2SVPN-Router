@@ -1,3 +1,24 @@
+while getopts ":h:r:a:t:v:e:" opt; do
+  case ${opt} in
+    h ) echo "help menu"
+		exit 0
+	  ;;
+    r ) region=$OPTARG
+      ;;
+    a ) localas=$OPTARG
+      ;;
+    t ) tgwid=$OPTARG
+      ;;
+    v ) vgwid=$OPTARG
+      ;;
+	e ) vpn=$OPTARG
+	  ;;
+    \? ) echo "Usage: cmd [-r REGION] [-a LOCAL ASN] [-t TGW ID] [-v VGW ID] [-e Existing VPN ID]"
+      exit 1
+      ;;
+  esac
+done
+
 TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"`
 publicip=`curl -H "X-aws-ec2-metadata-token: $TOKEN" -v http://169.254.169.254/latest/meta-data/public-ipv4`
 instanceid=`curl -H "X-aws-ec2-metadata-token: $TOKEN" -v http://169.254.169.254/latest/meta-data/instance-id`
@@ -18,23 +39,7 @@ if [[ ${#localpvtip} -ge 5 ]]
         else printf "Please specify the IP bound to the interface you want the VPN to originate from (that is associated with the Public IP we listed above):" && read localpvtip
 fi
 
-while getopts ":r:a:t:v:e:" opt; do
-  case ${opt} in
-    r ) region=$OPTARG
-      ;;
-    a ) localas=$OPTARG
-      ;;
-    t ) tgwid=$OPTARG
-      ;;
-    v ) vgwid=$OPTARG
-      ;;
-	e ) vpn=$OPTARG
-	  ;;
-    \? ) echo "Usage: cmd [-r REGION] [-a LOCAL ASN] [-t TGW ID]"
-      exit 1
-      ;;
-  esac
-done
+
 
 if [[ ${#region} -ge  9 ]]
         then echo Your region is $region

@@ -2,6 +2,20 @@
 
 cat /etc/system-release
 
+
+while getopts ":h:v:" opt; do
+  case ${opt} in
+	h ) echo "help menu"
+		exit 0
+	  ;;
+    v ) version=$OPTARG
+      ;;
+    \? ) echo "Usage: cmd [-v version] "
+      exit 1
+      ;;
+  esac
+done
+
 if grep Amazon /etc/system-release 1> /dev/null
     then amazon-linux-extras install -y epel 
     else echo "not AML"; EXIT
@@ -27,11 +41,26 @@ printf "######################################\n####  libyang has been installed
 
 
 
+
+
 groupadd -g 92 frr
 groupadd -r -g 85 frrvty
 useradd -u 92 -g 92 -M -r -G frrvty -s /sbin/nologin -c "FRR FRRouting suite" -d /var/run/frr frr
 cd ../../
-git clone --branch "stable/7.3" https://github.com/frrouting/frr.git frr
+if [[ $version == "74" ]]
+	then printf "Pulling FRR 7.4-stable\n"; git clone --branch "stable/7.4" https://github.com/frrouting/frr.git frr
+	elif [[ $version == "73" ]]
+	then printf "Pulling FRR 7.3-stable\n";git clone --branch "stable/7.3" https://github.com/frrouting/frr.git frr
+	elif [[ $version == "72" ]]
+	then printf "Pulling FRR 7.2-stable\n";git clone --branch "stable/7.2" https://github.com/frrouting/frr.git frr
+	elif [[ $version == "71" ]]
+	then printf "Pulling FRR 7.1-stable\n";git clone --branch "stable/7.1" https://github.com/frrouting/frr.git frr
+	elif [[ $version == "70" ]]
+	then printf "Pulling FRR 7.0-stable\n";git clone --branch "stable/7.0" https://github.com/frrouting/frr.git frr
+	elif [[ $version == "60" ]]
+	then printf "Pulling FRR 6.0-stable\n";git clone --branch "stable/7.0" https://github.com/frrouting/frr.git frr
+	else printf "Pulling default FRR 7.3-stable\n";git clone --branch "stable/7.3" https://github.com/frrouting/frr.git frr
+fi
 cd frr/
 sed -i '/^AC_CONFIG_MACRO_DIR*/a AC_CONFIG_AUX_DIR([.])' configure.ac
 . ./bootstrap.sh
