@@ -15,10 +15,14 @@ while getopts ":h:v:" opt; do
       ;;
   esac
 done
-
-if grep Amazon /etc/system-release 1> /dev/null
+cos7="CentOS Linux release 7"
+aml2="Amazon"
+rhelrelease="/etc/system-release"
+if [[ ! -z $(grep "$aml2" "$rhelrelease") ]]
     then . ./aml2.sh -v $version
-    else echo "not AML"; EXIT
+	elif [[ ! -z $(grep "$cos7" "$rhelrelease") ]]
+		then . ./cos7.sh -v $version
+    else echo "You are not running this on a supported operating system. Please check the documentation on Github or if you feel this is an error, open an issue on Github."; EXIT
 fi
 
 
