@@ -19,6 +19,23 @@ while getopts ":h:r:a:t:v:e:" opt; do
   esac
 done
 
+if [[ $(aws ec2 create-customer-gateway --bgp-asn 65500 --public-ip 192.0.2.1 --type ipsec.1 --dry-run --region us-east-1) == *"Unable to locate credentials."* ]]
+	then printf "Please configure AWS credentials using \"aws configure\"."; exit 1
+fi
+
+if [[ $(aws ec2 create-customer-gateway --bgp-asn 65500 --public-ip 192.0.2.1 --type ipsec.1 --dry-run --region us-east-1) == *"You are not authorized to perform this operation."* && ${#vpn} -le 15  ]]
+	then printf "Please update your permission to allow for create-customer-gateway. For more information on required permissions, review IAMPolicy.json"; exit 1
+fi
+
+if [[ $(aws ec2 create-vpn-connection --customer-gateway-id cgw-1234567890abcdefg --type ipsec.1 --transit-gateway-id tgw-1234567890abcdefg --tag-specification 'ResourceType=vpn-connection,Tags=[{Key=Name,Value='"test record"'}]' --region us-east-1 --dry-run) == *"You are not authorized to perform this operation."* && ${#vpn} -le 15  ]]
+	then printf "Please update your permission to allow for create-vpn-connection. For more information on required permissions, review IAMPolicy.json"; exit 1
+fi
+
+if [[ $(aws ec2 describe-vpn-connections --vpn-connection-ids vpn-1234567890abcdefg --region us-east-1 --dry-run) == *"You are not authorized to perform this operation."* && ${#vpn} -le 15  ]]
+	then printf "Please update your permission to allow for describe-vpn-connection. For more information on required permissions, review IAMPolicy.json"; exit 1
+fi
+
+
 TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"`
 publicip=`curl -H "X-aws-ec2-metadata-token: $TOKEN" -v http://169.254.169.254/latest/meta-data/public-ipv4`
 instanceid=`curl -H "X-aws-ec2-metadata-token: $TOKEN" -v http://169.254.169.254/latest/meta-data/instance-id`
