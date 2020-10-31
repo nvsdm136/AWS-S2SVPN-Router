@@ -39,6 +39,9 @@ if [[ $permissionerror == "TRUE" ]]
 	then printf "Please fix your permissions and then run this script again."; exit 1
 fi
 
+
+
+
 TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"`
 publicip=`curl -H "X-aws-ec2-metadata-token: $TOKEN" -v http://169.254.169.254/latest/meta-data/public-ipv4`
 instanceid=`curl -H "X-aws-ec2-metadata-token: $TOKEN" -v http://169.254.169.254/latest/meta-data/instance-id`
@@ -54,10 +57,15 @@ if [[ ${#instanceid} -ge 5 ]]
         else instanceid=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 17 | head -n 1)
 fi
 
-if [[ ${#localpvtip} -ge 5 ]]
-        then echo Your Private IP is $localpvtip
-        else printf "Please specify the IP bound to the interface you want the VPN to originate from (that is associated with the Public IP we listed above):" && read localpvtip
-fi
+
+while [[ ${#localpvtip} -lt 5 ]]; do
+	if [[ ${#localpvtip} -ge 5 ]]
+			then echo Your Private IP is $localpvtip
+			elif [[  ! -z $(grep "$cos7" "$rhelrelease") ]]
+			then defaultinterface=`ip route show default | awk '/default/ {print $5}'`; localpvtip=`/sbin/ifconfig $defaultinterface | grep netmask | awk '{print $2}'`
+			else printf "Please specify the IP bound to the interface you want the VPN to originate from (that is associated with the Public IP we listed above):" && read localpvtip
+	fi
+done
 
 
 

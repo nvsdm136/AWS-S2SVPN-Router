@@ -21,7 +21,7 @@ yum -y update
 
 #installing prereqs available in YUM as well as Strongswan
 
-yum -y install git gcc cmake pcre pcre-devel python3 python3-devel autoconf automake libtool make readline-devel texinfo net-snmp-devel groff pkgconfig json-c-devel pam-devel bison flex pytest c-ares-devel python-devel systemd-devel python-sphinx libcap-devel strongswan unzip
+yum -y install git gcc cmake pcre pcre-devel python3 python3-devel autoconf automake libtool make readline-devel texinfo net-snmp-devel groff pkgconfig json-c-devel pam-devel bison flex pytest c-ares-devel python-devel systemd-devel python-sphinx libcap-devel strongswan unzip net-tools
 
 #checking if AWS CLI is installed
 
