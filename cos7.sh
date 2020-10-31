@@ -11,14 +11,19 @@ while getopts ":h:v:" opt; do
   esac
 done
 
-
+#install epel
 
 yum -y install epel-release
 
+#Updating YUM repos
 
 yum -y update
+
+#installing prereqs available in YUM as well as Strongswan
+
 yum -y install git gcc cmake pcre pcre-devel python3 python3-devel autoconf automake libtool make readline-devel texinfo net-snmp-devel groff pkgconfig json-c-devel pam-devel bison flex pytest c-ares-devel python-devel systemd-devel python-sphinx libcap-devel strongswan unzip
 
+#checking if AWS CLI is installed
 
 if [[ $(aws --version) != *"aws-cli/2"* ]]
 then
@@ -26,14 +31,18 @@ then
     else cli=TRUE; echo "AWS CLI Found"
 fi
 
+#IF AWS CLI is not installed, checking proc architecture and installing the right package
+
 if [[ $(arch) == "x86_64" && $cli == "FALSE" ]]
-        then echo "x86_64 architecture detected"; curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"; unzip awscliv2.zip; . ./aws/install
+        then echo "x86_64 architecture detected"; curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"; unzip awscliv2.zip; sudo ./aws/install
         elif [[ $(arch) == "aarch64" ]]
-                then echo "ARM64 architecture detected"; curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv2.zip"; unzip awscliv2.zip; . ./aws/install
+                then echo "ARM64 architecture detected"; curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv2.zip"; unzip awscliv2.zip; sudo ./aws/install
 		elif [[ $cli == "TRUE" ]]
                 then echo ""
         else echo "Unsupported proc architecture"; exit 1
 fi
+
+#confirming the install of AWS CLI
 
 if [[ $(aws --version) != *"aws-cli/2"* ]]
 then
@@ -45,6 +54,8 @@ fi
 
 printf "##############################################\n####  Pre-requisites have been installed  ####\n##############################################\n"
 
+
+#installing Libyang
 
 if [[ $(whereis libyang) == *"libyang.so"* ]]
 	then echo "Libyang has already been installed"
@@ -58,10 +69,14 @@ if [[ $(whereis libyang) == *"libyang.so"* ]]
 		cd ../../
 fi
 
+#confirming Libyang install
+
 if [[ $(whereis libyang) == *"libyang.so"* ]]
 	then printf "######################################\n####  libyang has been installed  ####\n######################################\n"
 	else echo "Libyang failed to install. Please resolve the error and try again."; exit 1
 fi
+
+#installing FRR
 
 if [[ $(vtysh -c "show version" --dryrun) == *"FRRouting"* ]]
 	then echo "Free Range Routing has already been installed"
@@ -112,26 +127,41 @@ if [[ $(vtysh -c "show version" --dryrun) == *"FRRouting"* ]]
 		cd ../
 fi
 
+#confirming FRR install
+
 if [[ $(vtysh -c "show version" --dryrun) == *"FRRouting"* ]]
 	then printf "########################################\n####  FRR Installation is Complete  ####\n########################################\n"
 	else echo "FRR failed to install. Please resolve the error and try again."; exit 1
 fi
 
+#enabling the BGPD daemon
+
 sed -i "s/bgpd=.*/bgpd=yes/g" /etc/frr/daemons
+
+#setting linux to allow IPv4&6 forwarding
 
 if [[ $(cat /etc/sysctl.d/90-routing-sysctl.conf) == *"net.ipv4.conf.all.forwarding=1"* && $(cat /etc/sysctl.d/90-routing-sysctl.conf) == *"net.ipv6.conf.all.forwarding=1"* ]]
 	then printf "sysctl is set"
 	else printf "net.ipv4.conf.all.forwarding=1\nnet.ipv6.conf.all.forwarding=1" > /etc/sysctl.d/90-routing-sysctl.conf; sysctl -p /etc/sysctl.d/90-routing-sysctl.conf
 fi
 
+#enabling FRR and strongswan to start on bootup
+
 systemctl preset frr.service
 systemctl enable frr
 systemctl enable strongswan
+
+#placing bootstrap config files
 
 cat bgpd.conf > /etc/frr/bgpd.conf
 cat ipsec-vti.sh > /etc/ipsec-vti.sh
 cat ipsec.conf > /etc/strongswan/ipsec.conf
 
+#updating final permissions
+
 chmod +x /etc/ipsec-vti.sh
 chown frr:frr /etc/frr/bgpd.conf
 chmod 600 /etc/frr/bgpd.conf
+
+
+printf "#######################################################################################################################################################\n#######################################################################################################################################################\n#####                                                                                                                                             #####\n#####     AWS CLI, FRR and Strongswan have been installed successfully. Now run bootstrap.sh to configure an AWS Site-to-Site VPN connection.     #####\n#####                                                                                                                                             #####\n#######################################################################################################################################################\n#######################################################################################################################################################\n"
