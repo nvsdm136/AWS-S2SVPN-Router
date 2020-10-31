@@ -5,7 +5,7 @@
 - [x] Bootstrap auto-configuration of a connection to a TGW
 - [x] Include IAM Policy json document for the instance role
 - [x] Allow users to specify existing Site-To-Site VPN Connections
-- [ ] Allow users to specify FRR branch from a predifined list
+- [x] Allow users to specify FRR branch from a predifined list
 - [ ] Better exception handling
 - [x] Allow auto-configuration of VGW connected Site-To-Site VPN Connections
 - [ ] Full launch template in CloudFormation
