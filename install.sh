@@ -15,9 +15,13 @@ while getopts ":h:v:" opt; do
       ;;
   esac
 done
+
+#setting up some options
 cos7="CentOS Linux release 7"
 aml2="Amazon"
 rhelrelease="/etc/system-release"
+
+#checking OS version and executing correct install script
 if [[ ! -z $(grep "$aml2" "$rhelrelease") ]]
     then . ./aml2.sh -v $version
 	elif [[ ! -z $(grep "$cos7" "$rhelrelease") ]]
