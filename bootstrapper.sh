@@ -43,9 +43,11 @@ fi
 
 
 TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"`
-publicip=`curl -H "X-aws-ec2-metadata-token: $TOKEN" -v http://169.254.169.254/latest/meta-data/public-ipv4`
-instanceid=`curl -H "X-aws-ec2-metadata-token: $TOKEN" -v http://169.254.169.254/latest/meta-data/instance-id`
-localpvtip=`curl -H "X-aws-ec2-metadata-token: $TOKEN" -v http://169.254.169.254/latest/meta-data/local-ipv4`
+if [[ ${#$TOKEN} -ge 2 ]]
+	then publicip=`curl -H "X-aws-ec2-metadata-token: $TOKEN" -v http://169.254.169.254/latest/meta-data/public-ipv4`
+		instanceid=`curl -H "X-aws-ec2-metadata-token: $TOKEN" -v http://169.254.169.254/latest/meta-data/instance-id`
+		localpvtip=`curl -H "X-aws-ec2-metadata-token: $TOKEN" -v http://169.254.169.254/latest/meta-data/local-ipv4`
+fi
 
 if [[ ${#publicip} -ge 5 ]]
         then echo Your public IP is $publicip
@@ -57,8 +59,9 @@ if [[ ${#instanceid} -ge 5 ]]
         else instanceid=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 17 | head -n 1)
 fi
 
-
-while [[ ${#localpvtip} -lt 5 ]]; do
+loopcounter=0
+while [[ ${#localpvtip} -lt 5 && loopcounter < 20]]; do
+	loopcounter=$loopcounter+1
 	if [[ ${#localpvtip} -ge 5 ]]
 			then echo Your Private IP is $localpvtip
 			elif [[  ! -z $(grep "$cos7" "$rhelrelease") ]]
