@@ -1,8 +1,5 @@
 #!/bin/bash
-sed -i -e 's/\r$//' aml2.sh
-sed -i -e 's/\r$//' cos7.sh
-sed -i -e 's/\r$//' bootstrapper.sh
-chmod +x bootstrapper.sh
+
 cat /etc/system-release
 
 
